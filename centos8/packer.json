@@ -7,6 +7,7 @@
     "proxmox_storage_pool": "local-lvm",
     "proxmox_storage_pool_type": "lvm-thin",
     "proxmox_storage_format": "raw",
+    "proxmox_iso_pool": "local:iso",
     "centos_image": "CentOS-8.1.1911-x86_64-dvd1.iso",
     "template_name": "CentOS8-Template",
     "template_description": "CentOS 8 Template",
@@ -40,7 +41,7 @@
         }
       ],
       "scsi_controller": "virtio-scsi-single",
-      "iso_file": "local:iso/{{user `centos_image`}}",
+      "iso_file": "{{user `proxmox_iso_pool`}}/{{user `centos_image`}}",
       "boot_wait": "10s",
       "cores": "2",
       "memory": "2048",
