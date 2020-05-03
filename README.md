@@ -23,7 +23,7 @@ Next, you will need to know the URL to your Proxmox system, the name of the node
 ```
 packer build \
   -var proxmox_node=hp-desktop \
-  -var proxmox_user="root@pam" \
+  -var proxmox_username="root@pam" \
   -var proxmox_password=password \
   -var proxmox_url=https://192.168.0.1:8006/api2/json \
   centos7/packer.json
@@ -34,7 +34,7 @@ To build CentOS 8 issue:
 ```
 packer build \
   -var proxmox_node=hp-desktop \
-  -var proxmox_user="root@pam" \
+  -var proxmox_username="root@pam" \
   -var proxmox_password=password \
   -var proxmox_url=https://192.168.0.1:8006/api2/json \
   centos8/packer.json
