@@ -33,13 +33,14 @@
       ],
       "disks": [
         {
-          "type": "sata",
+          "type": "scsi",
           "disk_size": "8G",
           "storage_pool": "{{user `proxmox_storage_pool`}}",
           "storage_pool_type": "{{user `proxmox_storage_pool_type`}}",
           "format": "{{user `proxmox_storage_format`}}"
         }
       ],
+      "scsi_controller": "virtio-scsi-single",
       "iso_file": "{{user `proxmox_iso_pool`}}/{{user `centos_image`}}",
       "boot_wait": "10s",
       "cores": "2",

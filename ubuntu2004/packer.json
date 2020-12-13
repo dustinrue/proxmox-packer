@@ -8,9 +8,9 @@
     "proxmox_storage_pool_type": "lvm-thin",
     "proxmox_storage_format": "raw",
     "proxmox_iso_pool": "local:iso",
-    "centos_image": "CentOS-8.1.1911-x86_64-dvd1.iso",
-    "template_name": "CentOS8-Template",
-    "template_description": "CentOS 8 Template",
+    "ubuntu_image": "ubuntu-20.04.1-live-server-amd64.iso",
+    "template_name": "Ubuntu-20.04-Template",
+    "template_description": "Ubuntu 20.04 Template",
     "version": ""
   },
   "builders": [
@@ -23,7 +23,9 @@
       "node": "{{user `proxmox_node`}}",
       "os": "l26",
       "boot_command": [
-        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+        "<enter><enter><f6><esc><wait> ",
+        "autoinstall ds=nocloud-net;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+        "<enter><wait>"
       ],
       "network_adapters": [
         {
@@ -41,15 +43,15 @@
         }
       ],
       "scsi_controller": "virtio-scsi-single",
-      "iso_file": "{{user `proxmox_iso_pool`}}/{{user `centos_image`}}",
-      "boot_wait": "10s",
+      "iso_file": "{{user `proxmox_iso_pool`}}/{{user `ubuntu_image`}}",
+      "boot_wait": "5s",
       "cores": "2",
       "memory": "2048",
-      "http_directory": "centos8",
-      "ssh_username": "root",
-      "ssh_password": "Packer",
+      "http_directory": "ubuntu2004",
+      "ssh_username": "ubuntu",
+      "ssh_password": "ubuntu",
       "ssh_port": 22,
-      "ssh_timeout": "15m",
+      "ssh_timeout": "30m",
       "unmount_iso": true,
       "template_name": "{{user `template_name`}}",
       "template_description": "{{user `template_description`}}"
@@ -59,17 +61,9 @@
     {
       "type": "shell",
       "inline": [
-        "yum install -y cloud-init qemu-guest-agent cloud-utils-growpart gdisk",
-        "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
-        "rm -f /var/run/utmp",
-        ">/var/log/lastlog",
-        ">/var/log/wtmp",
-        ">/var/log/btmp",
-        "rm -rf /tmp/* /var/tmp/*",
-        "unset HISTFILE; rm -rf /home/*/.*history /root/.*history",
-        "rm -f /root/*ks",
-        "passwd -d root",
-        "passwd -l root"
+        "sudo rm -f /etc/cloud/cloud.cfg.d/99-installer.cfg",
+        "sudo cloud-init clean",
+        "sudo passwd -d ubuntu"
       ],
       "only": ["proxmox"]
     }
