@@ -40,6 +40,28 @@ packer build \
   centos8/packer.json
 ```
 
+To build Ubuntu 20.04 issue:
+
+```
+packer build \
+  -var proxmox_node=hp-desktop \
+  -var proxmox_username="root@pam" \
+  -var proxmox_password=password \
+  -var proxmox_url=https://192.168.0.1:8006/api2/json \
+  ubuntu2004/packer.json
+```
+
+To build Rocky Linux 8 issue:
+
+```
+packer build \
+  -var proxmox_node=hp-desktop \
+  -var proxmox_username="root@pam" \
+  -var proxmox_password=password \
+  -var proxmox_url=https://192.168.0.1:8006/api2/json \
+  rocky/packer.json
+```
+
 There are a number of other variables you can set. You will notice these closely match the available options for the [Proxmox builder](https://packer.io/docs/builders/proxmox.html). The full list of variables you can customize is:
 
 * `proxmox_username` - username to log into Proxmox as
