@@ -8,9 +8,9 @@
     "proxmox_storage_pool_type": "lvm-thin",
     "proxmox_storage_format": "raw",
     "proxmox_iso_pool": "local:iso",
-    "centos_image": "Rocky-8.4-x86_64-dvd1.iso",
-    "template_name": "RL8-Template",
-    "template_description": "Rocky Linux 8 Template",
+    "centos_image": "Rocky-9.0-x86_64-dvd.iso",
+    "template_name": "RL9-Template",
+    "template_description": "Rocky Linux 9 Template",
     "version": ""
   },
   "builders": [
@@ -23,7 +23,7 @@
       "node": "{{user `proxmox_node`}}",
       "os": "l26",
       "boot_command": [
-        "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+        "<tab> text inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/inst.ks<enter><wait>"
       ],
       "network_adapters": [
         {
@@ -44,8 +44,9 @@
       "iso_file": "{{user `proxmox_iso_pool`}}/{{user `centos_image`}}",
       "boot_wait": "10s",
       "cores": "2",
+      "cpu_type": "Nehalem",
       "memory": "2048",
-      "http_directory": "centos8",
+      "http_directory": "rocky9",
       "ssh_username": "root",
       "ssh_password": "Packer",
       "ssh_port": 22,
@@ -60,6 +61,7 @@
       "type": "shell",
       "inline": [
         "yum install -y cloud-init qemu-guest-agent cloud-utils-growpart gdisk",
+        "systemctl enable qemu-guest-agent",
         "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
         "rm -f /var/run/utmp",
         ">/var/log/lastlog",
@@ -69,7 +71,8 @@
         "unset HISTFILE; rm -rf /home/*/.*history /root/.*history",
         "rm -f /root/*ks",
         "passwd -d root",
-        "passwd -l root"
+        "passwd -l root",
+        "rm -f /etc/ssh/ssh_config.d/allow-root-ssh.conf"
       ],
       "only": ["proxmox"]
     }

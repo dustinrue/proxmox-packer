@@ -10,9 +10,11 @@ To use this you will need:
 * DVD ISO files for the OS you want to build an image for uploaded to Proxmox - [CentOS Downloads](https://wiki.centos.org/Download)
 * A working [Proxmox](https://www.proxmox.com/en/) system
 * [Packer](https://packer.io)
-* The builder machine must be accessible to Proxmox or you must host the ks.cfg files somewhere publicly accessible and modify the packer.json file
+* The builder machine must be accessible to Proxmox or you must host the ks.cfg or inst.ks files somewhere publicly accessible and modify the packer.json file.
 
 **The OS ISO file will need to be uploaded to your Proxmox system.**
+
+The simplest way to get the ISO file on your Proxmox system is to use the "Download from URL" option on the disk/share that you configured for ISO files.
 
 ## Building an Image
 
@@ -59,8 +61,21 @@ packer build \
   -var proxmox_username="root@pam" \
   -var proxmox_password=password \
   -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  rocky/packer.json
+  rocky8/packer.json
 ```
+
+To build Rocky Linux 9 issue:
+
+```
+packer build \
+  -var proxmox_node=hp-desktop \
+  -var proxmox_username="root@pam" \
+  -var proxmox_password=password \
+  -var proxmox_url=https://192.168.0.1:8006/api2/json \
+  rocky9/packer.json
+```
+
+Note that RL9 now requires at least an Intel Nehalem processor or equivalent. You can read more at  https://www.phoronix.com/scan.php?page=news_item&px=RHEL-9-x86-64-v2-Plans
 
 There are a number of other variables you can set. You will notice these closely match the available options for the [Proxmox builder](https://packer.io/docs/builders/proxmox.html). The full list of variables you can customize is:
 
