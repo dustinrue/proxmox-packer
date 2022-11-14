@@ -8,9 +8,9 @@
     "proxmox_storage_pool_type": "lvm-thin",
     "proxmox_storage_format": "raw",
     "proxmox_iso_pool": "local:iso",
-    "ubuntu_image": "ubuntu-20.04.5-live-server-amd64.iso",
-    "template_name": "Ubuntu-20.04-Template",
-    "template_description": "Ubuntu 20.04 Template",
+    "ubuntu_image": "ubuntu-22.04.1-live-server-amd64.iso",
+    "template_name": "Ubuntu-22.04-Template",
+    "template_description": "Ubuntu 22.04 Template",
     "version": ""
   },
   "builders": [
@@ -23,14 +23,16 @@
       "node": "{{user `proxmox_node`}}",
       "os": "l26",
       "boot_command": [
-        "<enter><enter><f6><esc><wait> ",
-        "autoinstall ds=nocloud-net;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
-        "<enter><wait>"
+        "c",
+        "linux /casper/vmlinuz -- autoinstall ds='nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/'",
+        "<enter><wait><wait>",
+        "initrd /casper/initrd",
+        "<enter><wait><wait>",
+        "boot<enter>"
       ],
       "network_adapters": [
         {
-          "bridge": "vmbr0",
-          "model": "virtio"
+          "bridge": "vmbr0"
         }
       ],
       "disks": [
@@ -44,10 +46,10 @@
       ],
       "scsi_controller": "virtio-scsi-single",
       "iso_file": "{{user `proxmox_iso_pool`}}/{{user `ubuntu_image`}}",
-      "boot_wait": "5s",
+      "boot_wait": "10s",
       "cores": "2",
       "memory": "2048",
-      "http_directory": "ubuntu2004/http",
+      "http_directory": "ubuntu2204/http",
       "ssh_username": "ubuntu",
       "ssh_password": "ubuntu",
       "ssh_port": 22,
@@ -61,6 +63,7 @@
     {
       "type": "shell",
       "inline": [
+        "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
         "sudo rm -f /etc/cloud/cloud.cfg.d/99-installer.cfg",
         "sudo cloud-init clean",
         "sudo passwd -d ubuntu"
