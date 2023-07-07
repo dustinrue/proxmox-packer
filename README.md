@@ -1,6 +1,8 @@
-# CentOS Packer Builder for Proxmox
+# CentOS/Rocky/Ubuntu Packer Builder for Proxmox
 
 This project provides Packer files to build a basic image of either CentOS 7 or CentOS 8 for use on a Proxmox system. Use it as is or as a starting point for a more fully customized image.
+
+This has been tested on Proxmox 7.x.
 
 ## Getting started
 
@@ -10,7 +12,7 @@ To use this you will need:
 * DVD ISO files for the OS you want to build an image for uploaded to Proxmox - [CentOS Downloads](https://wiki.centos.org/Download)
 * A working [Proxmox](https://www.proxmox.com/en/) system
 * [Packer](https://packer.io)
-* The builder machine must be accessible to Proxmox or you must host the ks.cfg or inst.ks files somewhere publicly accessible and modify the packer.json file.
+* The builder machine must be accessible to Proxmox or you must host the ks.cfg or inst.ks files somewhere publicly accessible and modify the packer.pkr.hcl file for the version you wish to build.
 
 **The OS ISO file will need to be uploaded to your Proxmox system.**
 
@@ -20,59 +22,67 @@ The simplest way to get the ISO file on your Proxmox system is to use the "Downl
 
 You will first want to determine if your host running Packer can be accessed by the Proxmox host. This is because Packer will briefly run an http server so that the installer can download the kickstart file. If Proxmox is on the same network as your builder host and there are no other firewall restrictions on your builder host this should work fine. If not, you will need to copy/host the ks.cfg files on a publicly accessible server.
 
-Next, you will need to know the URL to your Proxmox system, the name of the node to build on as well as a username and password of a user with sufficient privileges to create VMs and templates. If you have customized your install or are using a storage pool other than the default you will need to specify that as well. To build the CentOS 7 image would issue:
+Next, you will need to know the URL to your Proxmox system, the name of the node to build on as well as a username and password of a user with sufficient privileges to create VMs and templates. If you have customized your install or are using a storage pool other than the default you will need to specify that as well.
+
+With all of the information at hand, edit the variables.pkrvars.hcl file and update the variables. For a full set of variables you can override look at any packer.pkr.hcl file for a list of variables.
+
+In addition to using the packer.pkr.hcl file you can also set some variables using environment variables. For example, I set my Proxmox password using the following variable:
+
+```
+PROXMOX_PASSWORD=<scrubbed>
+```
+
+### Using the Makefile
+
+You can build the following templates by running:
+
+* make centos7
+* make centos8
+* make rocky8
+* make rocky9
+* make ubuntu2004
+* make ubuntu2204
+
+### Building manually
+
+If you do not want to use the Makefile then the following commands will work:
+
+#### CentOS 7
 
 ```
 packer build \
-  -var proxmox_node=hp-desktop \
-  -var proxmox_username="root@pam" \
-  -var proxmox_password=password \
-  -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  centos7/packer.json
+  -var-file variables.pkrvars.hcl
+  centos7/packer.pkr.hcl
 ```
 
-To build CentOS 8 issue:
+#### CentOS 8
 
 ```
-packer build \
-  -var proxmox_node=hp-desktop \
-  -var proxmox_username="root@pam" \
-  -var proxmox_password=password \
-  -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  centos8/packer.json
+packer build -var-file variables.pkrvars.hcl centos8/packer.pkr.hcl
 ```
 
-To build Ubuntu 20.04 issue:
+#### Rocky Linux 8
 
 ```
-packer build \
-  -var proxmox_node=hp-desktop \
-  -var proxmox_username="root@pam" \
-  -var proxmox_password=password \
-  -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  ubuntu2004/packer.json
+packer build -var-file variables.pkrvars.hcl rocky8/packer.pkr.hcl
 ```
 
-To build Rocky Linux 8 issue:
+#### Rocky Linux 9
 
 ```
-packer build \
-  -var proxmox_node=hp-desktop \
-  -var proxmox_username="root@pam" \
-  -var proxmox_password=password \
-  -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  rocky8/packer.json
+packer build -var-file variables.pkrvars.hcl rocky9/packer.pkr.hcl
 ```
 
-To build Rocky Linux 9 issue:
+#### Ubuntu 20.04
 
 ```
-packer build \
-  -var proxmox_node=hp-desktop \
-  -var proxmox_username="root@pam" \
-  -var proxmox_password=password \
-  -var proxmox_url=https://192.168.0.1:8006/api2/json \
-  rocky9/packer.json
+packer build -var-file variables.pkrvars.hcl ubuntu2004/packer.pkr.hcl
+```
+
+#### Ubuntu 22.04
+
+```
+packer build -var-file variables.pkrvars.hcl ubuntu2204/packer.pkr.hcl
 ```
 
 Note that RL9 now requires at least an Intel Nehalem processor or equivalent. You can read more at  https://www.phoronix.com/scan.php?page=news_item&px=RHEL-9-x86-64-v2-Plans
