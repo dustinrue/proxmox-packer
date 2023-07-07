@@ -50,9 +50,7 @@ If you do not want to use the Makefile then the following commands will work:
 #### CentOS 7
 
 ```
-packer build \
-  -var-file variables.pkrvars.hcl
-  centos7/packer.pkr.hcl
+packer build -var-file variables.pkrvars.hcl centos7/packer.pkr.hcl
 ```
 
 #### CentOS 8
