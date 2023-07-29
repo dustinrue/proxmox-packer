@@ -2,16 +2,19 @@
 
 This project provides Packer files to build a basic image of either CentOS 7 or CentOS 8 for use on a Proxmox system. Use it as is or as a starting point for a more fully customized image.
 
-This has been tested on Proxmox 7.x.
+This has been tested on Proxmox 7.x and 8.x.
 
 ## Getting started
 
 To use this you will need:
 
 * This repo `git clone https://github.com/dustinrue/proxmox-packer.git`
-* DVD ISO files for the OS you want to build an image for uploaded to Proxmox - [CentOS Downloads](https://wiki.centos.org/Download)
+* ISO files for the OS you want to build an image for uploaded to Proxmox:
+  * [CentOS Downloads](https://wiki.centos.org/Download)
+  * [Rocky Linux](https://rockylinux.org/download)
+  * [Ubuntu](https://ubuntu.com/download/server)
 * A working [Proxmox](https://www.proxmox.com/en/) system
-* [Packer](https://packer.io)
+* [Packer](https://packer.io). This project is tested with Packer version 1.9.2
 * The builder machine must be accessible to Proxmox or you must host the ks.cfg or inst.ks files somewhere publicly accessible and modify the packer.pkr.hcl file for the version you wish to build.
 
 **The OS ISO file will need to be uploaded to your Proxmox system.**
@@ -94,7 +97,7 @@ There are a number of other variables you can set. You will notice these closely
 * `proxmox_storage_pool` - name of the storage pool the image should be built on
 * `proxmox_storage_pool_type` - type of storage pool, `lvm-thin` (default), `lvm` , `zfspool` or `directory`
 * `proxmox_storage_format` - storage format, `raw` (default), `cow`, `qcow`, `qed`, `qcow2`, `vmdk` or `cloop` 
-* `centos_image` - The CentOS DVD image. Defaults to the most recent release as of April 3, 2020
+* `centos_image` or `ubuntu_image` - The OS image.
 * `template_name` - Name of the template. Defaults to `CentOS7-Template` or `CentOS8-Template` depending on version
 * `template_description` - Template description. Defaults to `CentOS 7 Template` or `CentOS 8 Template` depending on image being built.
 
