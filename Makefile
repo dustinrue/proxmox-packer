@@ -25,7 +25,7 @@ ubuntu2004:
 
 ubuntu2204:
 	packer init ubuntu2204/packer.pkr.hcl
-	packer build -var-file variables.pkrvars.hcl ubuntu2004/packer.pkr.hcl
+	packer build -var-file variables.pkrvars.hcl ubuntu2204/packer.pkr.hcl
 
 almalinux9:
 	packer init almalinux9/packer.pkr.hcl
