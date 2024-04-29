@@ -1,0 +1,33 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+  storage:
+    layout:
+      name: lvm
+  network:
+    version: 2
+    ethernets:
+      all-en:
+        dhcp4: true
+        match: 
+          name: en*
+      all-eth:
+        dhcp4: true
+        match: 
+          name: eth*
+  identity:
+    hostname: ubuntu
+    username: ubuntu
+    password: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
+  ssh:
+    install-server: yes
+    allow-pw: yes
+  user-data:
+    disable_root: false
+  packages:
+    - qemu-guest-agent
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
