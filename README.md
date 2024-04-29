@@ -45,6 +45,7 @@ You can build the following templates by running:
 * make rocky9
 * make ubuntu2004
 * make ubuntu2204
+* make ubuntu2404
 
 ### Building manually
 
@@ -84,6 +85,12 @@ packer build -var-file variables.pkrvars.hcl ubuntu2004/packer.pkr.hcl
 
 ```
 packer build -var-file variables.pkrvars.hcl ubuntu2204/packer.pkr.hcl
+```
+
+#### Ubuntu 24.04
+
+```
+packer build -var-file variables.pkrvars.hcl ubuntu2404/packer.pkr.hcl
 ```
 
 Note that RL9 now requires at least an Intel Nehalem processor or equivalent. You can read more at  https://www.phoronix.com/scan.php?page=news_item&px=RHEL-9-x86-64-v2-Plans
