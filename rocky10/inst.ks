@@ -1,5 +1,5 @@
-#version=RHEL8
-ignoredisk --only-use=sda
+#version=RHEL10
+#ignoredisk --drives=sr0
 # Partition clearing information
 clearpart --none --initlabel
 # Use graphical install
@@ -17,7 +17,7 @@ network  --bootproto=dhcp --ipv6=auto --activate
 network  --hostname=localhost.localdomain
 repo --name="AppStream" --baseurl=file:///run/install/repo/AppStream
 # Root password
-rootpw Packer
+rootpw --iscrypted $6$4xnGJlixp0UEdxJe$Mw3p00mYUU/Hz1PLG8wSCrwAU42o616HQ9FKkNqQ161mljJhLNndVg/vldQ5CJNbj6CTzy52sdsetja9CQbCE0
 # Run the Setup Agent on first boot
 firstboot --disabled
 # Do not configure the X Window System
@@ -25,9 +25,11 @@ skipx
 # System services
 services --disabled="kdump" --enabled="sshd,rsyslog,chronyd"
 # System timezone
-timezone Etc/UTC --isUtc
+timezone Etc/UTC --utc
 # Disk partitioning information
-part / --fstype="xfs" --grow --size=6144
+part /boot/efi --fstype="efi" --size=200 --fsoptions="umask=0077,shortname=winnt"
+part /boot --fstype="xfs" --size=1024
+part / --fstype="xfs" --grow --size=5120
 part swap --fstype="swap" --size=512
 reboot
 
@@ -81,15 +83,15 @@ python3-libselinux
 
 # this is installed by default but we don't need it in virt
 echo "Removing linux-firmware package."
-yum -C -y remove linux-firmware
+dnf -C -y remove linux-firmware
 
 # Remove firewalld; it is required to be present for install/image building.
 echo "Removing firewalld."
-yum -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
+dnf -C -y remove firewalld --setopt="clean_requirements_on_remove=1"
 
 # remove avahi and networkmanager
 echo "Removing avahi/zeroconf and NetworkManager"
-yum -C -y remove avahi\* 
+dnf -C -y remove avahi\* 
 
 echo -n "Getty fixes"
 # although we want console output going to the serial console, we don't
@@ -134,15 +136,10 @@ sed -i 's/console=tty0/console=tty0 console=ttyS0,115200n8/' /boot/grub2/grub.cf
 # rm -f /var/tmp/zeros
 # echo "(Don't worry -- that out-of-space error was expected.)"
 
-yum update -y
+dnf update -y
 
 sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
+echo "PermitRootLogin yes" > /etc/ssh/sshd_config.d/allow-root-ssh.conf
 
-yum clean all
-%end
-
-%anaconda
-pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty
-pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok
-pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty
+dnf clean all
 %end

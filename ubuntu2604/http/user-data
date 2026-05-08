@@ -1,0 +1,35 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US
+  keyboard:
+    layout: us
+  storage:
+    layout:
+      name: lvm
+  network:
+    version: 2
+    ethernets:
+      all-en:
+        dhcp4: true
+        match:
+          name: en*
+      all-eth:
+        dhcp4: true
+        match:
+          name: eth*
+  identity:
+    hostname: ubuntu
+    username: ubuntu
+    password: "$6$dVMN8b0f1IXBvSbJ$cyshoDfMM4uqgxqmgqAsr804VgCgRuCrJro94BBnWhnync0anSBPT.Bpz0U2phgoxVbq43k4ihVEHooVANkn91"
+  ssh:
+    install-server: yes
+    allow-pw: yes
+  user-data:
+    disable_root: false
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - echo "PasswordAuthentication yes" > /target/etc/ssh/sshd_config.d/60-packer.conf
+    - curtin in-target --target=/target -- add-apt-repository -y universe
+    - curtin in-target --target=/target -- apt-get install -y qemu-guest-agent
+    - curtin in-target --target=/target -- systemctl enable qemu-guest-agent
