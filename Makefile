@@ -1,6 +1,6 @@
 proxmox_storage_pool = 
 
-.PHONY: rocky8 rocky9 rocky10 ubuntu2004 ubuntu2204 ubuntu2404 ubuntu2604 all
+.PHONY: rocky8 rocky9 rocky10 ubuntu2004 ubuntu2204 ubuntu2404 ubuntu2604 debian13 all
 
 all: rocky8 rocky9 ubuntu2004 ubuntu2204
 rocky8:
@@ -30,6 +30,10 @@ ubuntu2404:
 ubuntu2604:
 	packer init ubuntu2604/packer.pkr.hcl
 	packer build -var-file variables.pkrvars.hcl ubuntu2604/packer.pkr.hcl
+
+debian13:
+	packer init debian13/packer.pkr.hcl
+	packer build -var-file variables.pkrvars.hcl debian13/packer.pkr.hcl
 
 almalinux9:
 	packer init almalinux9/packer.pkr.hcl

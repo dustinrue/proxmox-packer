@@ -1,6 +1,6 @@
-# Rocky/Ubuntu Packer Builder for Proxmox
+# Rocky/Ubuntu/Debian Packer Builder for Proxmox
 
-This project provides Packer files to build a basic image of a number of operating systems including RHEL variants like Rocky and AlmaLinux for use on a Proxmox system. Use it as is or as a starting point for a more fully customized image.
+This project provides Packer files to build a basic image of a number of operating systems including RHEL variants like Rocky and AlmaLinux, Debian, and Ubuntu for use on a Proxmox system. Use it as is or as a starting point for a more fully customized image.
 
 This has been tested on Proxmox 7.x and 8.x.
 
@@ -11,6 +11,7 @@ To use this you will need:
 * This repo `git clone https://github.com/dustinrue/proxmox-packer.git`
 * ISO files for the OS you want to build an image for uploaded to Proxmox:
   * [Rocky Linux](https://rockylinux.org/download)
+  * [Debian](https://www.debian.org/CD/http-ftp/)
   * [Ubuntu](https://ubuntu.com/download/server)
 * A working [Proxmox](https://www.proxmox.com/en/) system
 * [Packer](https://packer.io). This project is tested with Packer version 1.14.1
@@ -45,6 +46,7 @@ You can build the following templates by running:
 * make ubuntu2204
 * make ubuntu2404
 * make ubuntu2604
+* make debian13
 
 ### Building manually
 
@@ -92,6 +94,12 @@ packer build -var-file variables.pkrvars.hcl ubuntu2404/packer.pkr.hcl
 packer build -var-file variables.pkrvars.hcl ubuntu2604/packer.pkr.hcl
 ```
 
+#### Debian 13
+
+```
+packer build -var-file variables.pkrvars.hcl debian13/packer.pkr.hcl
+```
+
 Note that RL9 now requires at least an Intel Nehalem processor or equivalent. You can read more at  https://www.phoronix.com/scan.php?page=news_item&px=RHEL-9-x86-64-v2-Plans
 
 There are a number of other variables you can set. You will notice these closely match the available options for the [Proxmox builder](https://packer.io/docs/builders/proxmox.html). The full list of variables you can customize is:
@@ -103,7 +111,7 @@ There are a number of other variables you can set. You will notice these closely
 * `proxmox_storage_pool` - name of the storage pool the image should be built on
 * `proxmox_storage_pool_type` - type of storage pool, `lvm-thin` (default), `lvm` , `zfspool` or `directory`
 * `proxmox_storage_format` - storage format, `raw` (default), `cow`, `qcow`, `qed`, `qcow2`, `vmdk` or `cloop` 
-* `centos_image` or `ubuntu_image` - The OS image.
+* `debian_image`, `rocky_image`, or `ubuntu_image` - The OS image filename on the Proxmox ISO storage pool.
 * `template_name` - Name of the template. Defaults to the OS-specific name, e.g. `RL9-Template` or `Ubuntu-26.04-Template`.
 * `template_description` - Template description. Defaults to the OS-specific description, e.g. `Rocky Linux 9 Template`.
 
